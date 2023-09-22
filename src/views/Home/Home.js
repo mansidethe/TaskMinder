@@ -1,104 +1,166 @@
-import React, { useState } from "react";
-import "./Home.css"
+import React, { useEffect, useState } from "react";
+import "./Home.css";
 import Task from "./../../componenets/Task/Task";
 
-
-
 const Home = () => {
-    const [taskList, setTaskList] = useState([
-        {
-            id: 1,
-            title: 'Submit Assignment',
-            description: 'plz fastly submit',
-            priority: 'high'
-        },
+  const [taskList, setTaskList] = useState([]);
 
-        {
-            id: 2,
-            title: 'Submit Assignment',
-            description: 'plz fastly submit',
-            priority: 'high'
-        }
-    ])
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [priority, setPriority] = useState("");
 
-    const [title, setTitle] = useState('')
-    const [description, setDescription] = useState('')
-    const [priority, setPriority] = useState('')
+  const[isEdit, setIsEdite]=useState(false);
 
-    const addTaskToList = () => {
-
-        const randomId = Math.floor(Math.random() * 1000);
-
-        const obj = {
-            id: randomId,
-            title: title,
-            description: description,
-            priority: priority,
-        }
-        setTaskList([...taskList, obj])
-        setTitle('');
-        setDescription('');
-        setPriority('');
-
+  useEffect(() => {
+   
+    const list = JSON.parse(localStorage.getItem("pinklist")) ;
+    setTaskList(list);
+    if(list && list.length>0){
+        setTaskList(list)
     }
-    return (
+  }, []);
 
-        <div className="container">
-            <h1 className="app-title">PinkList</h1>
+  const saveListToLocalStorage = (tasks) => {
+    
+    localStorage.setItem("pinklist", JSON.stringify(tasks));
+  };
 
+  const addTaskToList = () => {
+    const randomId = Math.floor(Math.random() * 1000);
 
-            <div className="to-do-flex-container">
-                <div>
-                    <h2 className="text-center"> Show List</h2>
-                    {
-                        taskList.map((taskItem, index) => {
-                            const { id, title, description, priority } = taskItem;
+    const obj = {
+      id: randomId,
+      title: title,
+      description: description,
+      priority: priority,
+    };
 
-                            return <Task id={id} title={title} description={description} priority={priority} />
-                        })
-                    }
-                </div>
+    
+    const newTaskList = [...taskList, obj];
 
-                <div>
-                    <h2 className="text-center">Add List</h2>
-                    <div className="add-task-form-container">
+    
+    setTaskList(newTaskList);
+    setTitle("");
+    setDescription("");
+    setPriority("");
 
-                        <form>
-                            <input type="text" value={title} onChange={(e) => {
-                                setTitle(e.target.value)
-                            }}
-                                placeholder="Enter title"
-                                className="task-input"
-                            />
+    
+    saveListToLocalStorage(newTaskList);
+  };
 
-                            <input type="text" value={description} onChange={(e) => {
-                                setDescription(e.target.value)
-                            }}
-                                placeholder="Enter description"
-                                className="task-input"
-                            />
+  const removeTaskFromList = (obj) => {
+    const index = taskList.indexOf(obj);
 
-                            <input type="text" value={priority} onChange={(e) => {
-                                setPriority(e.target.value)
-                            }}
-                                placeholder="Enter priority"
-                                className="task-input"
-                            />
+    if (index !== -1) {
 
+      const tempArray = [...taskList];
+      tempArray.splice(index, 1);
 
-                            <button className="btn-add-task" type="button"
-                                onClick={addTaskToList}>
-                                Add Task To List
-                            </button>
+      
+      setTaskList(tempArray);
 
-                        </form>
+      saveListToLocalStorage(tempArray);
+    }
+  };
 
-                    </div>
-                </div>
+  const setTaskEditable = (obj) => {
+setIsEdite(true);
+  }
 
-            </div>
+  return (
+    <div className="container">
+      <h1 className="app-title">TO DO APP</h1>
+
+      <div className="to-do-flex-container">
+
+        <div>
+
+          <h2 className="text-center"> Show List</h2>
+
+          {taskList.map((taskItem, index) => (
+            <Task
+              id={taskItem.id}
+              title={taskItem.title}
+              description={taskItem.description}
+              priority={taskItem.priority}
+              key={index}
+              removeTaskFromList={removeTaskFromList}
+              setTaskEditable={setTaskEditable}
+              />
+
+          ))}
+
         </div>
-    )
-}
 
-export default Home
+        <div>
+          <h2 className="text-center">
+          {isEdit ? 'Update Task': 'Add Task'}
+          </h2>
+
+
+          <div className="add-task-form-container">
+
+
+            <form>
+
+
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                }}
+
+                placeholder="Enter title"
+                className="task-input"/>
+
+
+              <input
+                type="text"
+                value={description}
+                onChange={(e) => {
+                  setDescription(e.target.value);
+                }}
+                placeholder="Enter description"
+                className="task-input"/>
+
+
+              <input
+                type="text"
+                value={priority}
+                onChange={(e) => {
+                  setPriority(e.target.value);
+                }}
+                placeholder="Enter priority"
+                className="task-input"/>
+
+                <div className="btn-container">
+                    {
+                        isEdit ?
+                        <button
+                className="btn-add-task"
+                type="button"   onClick={addTaskToList}>
+              Update Task 
+              </button>
+              :
+                    
+
+                <button
+                className="btn-add-task"
+                type="button"  onClick={addTaskToList}>
+               Add Task 
+              </button>
+}
+              
+
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Home;
