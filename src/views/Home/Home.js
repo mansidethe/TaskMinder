@@ -19,9 +19,15 @@ const Home = () => {
     localStorage.setItem("pinklist", JSON.stringify(tasks));
   };
 
+  const clearInputFields = () => {
+    setTitle("");
+    setDescription("");
+    setPriority("");
+  }
+
   const addTaskToList = () => {
     if (isEdit) {
-      // If editing, update the existing task
+    
       const updatedTaskList = taskList.map((task) =>
         task.id === id
           ? { id, title, description, priority }
@@ -29,7 +35,7 @@ const Home = () => {
       );
       setTaskList(updatedTaskList);
     } else {
-      // If not editing, add a new task
+      
       const randomId = Math.floor(Math.random() * 1000);
       const obj = {
         id: randomId,
@@ -38,14 +44,12 @@ const Home = () => {
         priority: priority,
       };
       const newTaskList = [...taskList, obj];
+
       setTaskList(newTaskList);
     }
 
-    // Clear input fields and update local storage
-    setTitle("");
-    setDescription("");
-    setPriority("");
-    setIsEdit(false); // Reset edit mode
+    clearInputFields();
+ 
     saveListToLocalStorage(taskList);
   };
 
@@ -84,9 +88,7 @@ setTaskList([...tempArray])
 saveListToLocalStorage(tempArray)
 
 setId(0);
-setTitle('');
-setDescription('');
-setPriority('');
+clearInputFields();
 setIsEdit(false);
 
   }
@@ -98,7 +100,10 @@ setIsEdit(false);
       <div className="to-do-flex-container">
         <div>
           <h2 className="text-center">Show List</h2>
-          {taskList.map((taskItem, index) => (
+
+          <div className="tasks-container">
+          {
+          taskList.map((taskItem, index) => (
             <Task
               id={taskItem.id}
               title={taskItem.title}
@@ -108,7 +113,9 @@ setIsEdit(false);
               removeTaskFromList={() => removeTaskFromList(taskItem)}
               setTaskEditable={() => setTaskEditable(taskItem)}
             />
-          ))}
+          ))
+          }
+        </div>
         </div>
 
         <div>
