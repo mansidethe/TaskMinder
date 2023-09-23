@@ -1,82 +1,103 @@
 import React, { useEffect, useState } from "react";
 import "./Home.css";
-import Task from "./../../componenets/Task/Task";
+import Task from "../../componenets/Task/Task";
 
 const Home = () => {
   const [taskList, setTaskList] = useState([]);
-
+  const [id, setId] = useState(0);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("");
-
-  const[isEdit, setIsEdite]=useState(false);
+  const [isEdit, setIsEdit] = useState(false);
 
   useEffect(() => {
-   
     const list = JSON.parse(localStorage.getItem("pinklist")) ;
     setTaskList(list);
-    if(list && list.length>0){
-        setTaskList(list)
-    }
   }, []);
 
   const saveListToLocalStorage = (tasks) => {
-    
     localStorage.setItem("pinklist", JSON.stringify(tasks));
   };
 
   const addTaskToList = () => {
-    const randomId = Math.floor(Math.random() * 1000);
+    if (isEdit) {
+      // If editing, update the existing task
+      const updatedTaskList = taskList.map((task) =>
+        task.id === id
+          ? { id, title, description, priority }
+          : task
+      );
+      setTaskList(updatedTaskList);
+    } else {
+      // If not editing, add a new task
+      const randomId = Math.floor(Math.random() * 1000);
+      const obj = {
+        id: randomId,
+        title: title,
+        description: description,
+        priority: priority,
+      };
+      const newTaskList = [...taskList, obj];
+      setTaskList(newTaskList);
+    }
 
-    const obj = {
-      id: randomId,
-      title: title,
-      description: description,
-      priority: priority,
-    };
-
-    
-    const newTaskList = [...taskList, obj];
-
-    
-    setTaskList(newTaskList);
+    // Clear input fields and update local storage
     setTitle("");
     setDescription("");
     setPriority("");
-
-    
-    saveListToLocalStorage(newTaskList);
+    setIsEdit(false); // Reset edit mode
+    saveListToLocalStorage(taskList);
   };
 
   const removeTaskFromList = (obj) => {
-    const index = taskList.indexOf(obj);
-
-    if (index !== -1) {
-
-      const tempArray = [...taskList];
-      tempArray.splice(index, 1);
-
-      
-      setTaskList(tempArray);
-
-      saveListToLocalStorage(tempArray);
-    }
+    const updatedTaskList = taskList.filter((task) => task.id !== obj.id);
+    setTaskList(updatedTaskList);
+    saveListToLocalStorage(updatedTaskList);
   };
 
   const setTaskEditable = (obj) => {
-setIsEdite(true);
+    setIsEdit(true);
+    setId(obj.id);
+    setTitle(obj.title);
+    setDescription(obj.description);
+    setPriority(obj.priority);
+  };
+
+  const updateTask = () => {
+let indexToUpdate;
+
+taskList.forEach((task, i) => {
+  if(task.id === id){
+    indexToUpdate=i;
+  }
+})
+
+const tempArray = taskList;
+tempArray[indexToUpdate]={
+  id:id,
+  title:title,
+  description:description,
+  priority:priority
+}
+setTaskList([...tempArray])
+
+saveListToLocalStorage(tempArray)
+
+setId(0);
+setTitle('');
+setDescription('');
+setPriority('');
+setIsEdit(false);
+
   }
 
   return (
     <div className="container">
-      <h1 className="app-title">TO DO APP</h1>
+      <h1 className="app-title">Daily Planner</h1>
 
       <div className="to-do-flex-container">
-
         <div>
-
-          <h2 className="text-center"> Show List</h2>
-
+          <h2 className="text-center">Show List</h2>
           {taskList.map((taskItem, index) => (
             <Task
               id={taskItem.id}
@@ -84,36 +105,28 @@ setIsEdite(true);
               description={taskItem.description}
               priority={taskItem.priority}
               key={index}
-              removeTaskFromList={removeTaskFromList}
-              setTaskEditable={setTaskEditable}
-              />
-
+              removeTaskFromList={() => removeTaskFromList(taskItem)}
+              setTaskEditable={() => setTaskEditable(taskItem)}
+            />
           ))}
-
         </div>
 
         <div>
           <h2 className="text-center">
-          {isEdit ? 'Update Task': 'Add Task'}
+            {isEdit ? `Update Task ${id}` : 'Add Task'}
           </h2>
 
-
           <div className="add-task-form-container">
-
-
             <form>
-
-
               <input
                 type="text"
                 value={title}
                 onChange={(e) => {
                   setTitle(e.target.value);
                 }}
-
                 placeholder="Enter title"
-                className="task-input"/>
-
+                className="task-input"
+              />
 
               <input
                 type="text"
@@ -122,8 +135,8 @@ setIsEdite(true);
                   setDescription(e.target.value);
                 }}
                 placeholder="Enter description"
-                className="task-input"/>
-
+                className="task-input"
+              />
 
               <input
                 type="text"
@@ -132,35 +145,37 @@ setIsEdite(true);
                   setPriority(e.target.value);
                 }}
                 placeholder="Enter priority"
-                className="task-input"/>
+                className="task-input"
+              />
 
-                <div className="btn-container">
-                    {
-                        isEdit ?
-                        <button
-                className="btn-add-task"
-                type="button"   onClick={addTaskToList}>
-              Update Task 
-              </button>
-              :
-                    
-
-                <button
-                className="btn-add-task"
-                type="button"  onClick={addTaskToList}>
-               Add Task 
-              </button>
-}
-              
-
+              <div className="btn-container">
+                {
+                  isEdit ?
+                  <button
+                  className="btn-add-task"
+                  type="button"
+                  onClick={updateTask}>
+                  Update
+                  </button>
+                  :
+                  <button
+                  className="btn-add-task"
+                  type="button"
+                  onClick={addTaskToList}>
+                  Add
+                  </button>
+                }
+                
+                
+                  
+                
               </div>
-
             </form>
           </div>
         </div>
       </div>
     </div>
   );
-};
+}
 
-export default Home;
+export default Home     
