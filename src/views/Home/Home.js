@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Home.css";
 import Task from "../../componenets/Task/Task";
+import showToast from 'crunchy-toast';
 
 const Home = () => {
   const [taskList, setTaskList] = useState([]);
@@ -51,12 +52,17 @@ const Home = () => {
     clearInputFields();
  
     saveListToLocalStorage(taskList);
+
+    showToast('Task added successfully','success',3000);
   };
 
   const removeTaskFromList = (obj) => {
     const updatedTaskList = taskList.filter((task) => task.id !== obj.id);
     setTaskList(updatedTaskList);
+
     saveListToLocalStorage(updatedTaskList);
+
+    showToast('Task deleted successfully','alert',3000);
   };
 
   const setTaskEditable = (obj) => {
@@ -90,6 +96,8 @@ saveListToLocalStorage(tempArray)
 setId(0);
 clearInputFields();
 setIsEdit(false);
+
+showToast('Task updated successfully','info',3000);
 
   }
 
