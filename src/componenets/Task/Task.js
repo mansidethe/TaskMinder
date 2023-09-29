@@ -11,7 +11,7 @@ const Task = ({ id, title, description, priority, removeTaskFromList,setTaskEdit
             <span className="task-priority">{priority}</span>
             <span className="task-delete-btn"  onClick={() => {
            removeTaskFromList(obj);
-            }}>delete</span>
+            }}>❌</span>
            
            <span className="task-edit-btn"  onClick={() => {
           setTaskEditable(obj);

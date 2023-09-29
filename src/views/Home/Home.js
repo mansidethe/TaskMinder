@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./Home.css";
 import Task from "../../componenets/Task/Task";
 import showToast from 'crunchy-toast';
+import { saveListToLocalStorage } from "../../util/Localstorage";
 
 const Home = () => {
   const [taskList, setTaskList] = useState([]);
@@ -16,15 +17,13 @@ const Home = () => {
     setTaskList(list);
   }, []);
 
-  const saveListToLocalStorage = (tasks) => {
-    localStorage.setItem("pinklist", JSON.stringify(tasks));
-  };
-
+  
   const clearInputFields = () => {
     setTitle("");
     setDescription("");
     setPriority("");
   }
+  
 
   const addTaskToList = () => {
     if (isEdit) {
@@ -57,6 +56,7 @@ const Home = () => {
   };
 
   const removeTaskFromList = (obj) => {
+    
     const updatedTaskList = taskList.filter((task) => task.id !== obj.id);
     setTaskList(updatedTaskList);
 
@@ -103,7 +103,7 @@ showToast('Task updated successfully','info',3000);
 
   return (
     <div className="container">
-      <h1 className="app-title">Daily Planner</h1>
+      <h1 className="app-title">TaskMinder</h1>
 
       <div className="to-do-flex-container">
         <div>
