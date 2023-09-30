@@ -111,7 +111,7 @@ showToast('Task updated successfully','info',3000);
 
           <div className="tasks-container">
           {
-          taskList.map((taskItem, index) => (
+          taskList?.map((taskItem, index) => (
             <Task
               id={taskItem.id}
               title={taskItem.title}
