@@ -35,18 +35,40 @@ const Home = () => {
     setDescription("");
     setPriority("");
   }
+  const findTaskIndexById = (taskId)=>{
+    let index;
+    taskList.forEach((task,i)=>{
+      if(task.id===taskId)
+      {
+        index=i
+      }
+    })
+    return index;
+  }
+  const checkRequiredFields=()=>{
+    if(! title){
+      showToast('Title is required!','alert',3000);
+      return false;
+    }
+
+ if(! description){
+      showToast('Description is required!','alert',3000);
+      return false;
+    }
+
+    if(! priority){
+      showToast('Priority is required!','alert',3000);
+      return false;
+    }
+
+  }
   
 
   const addTaskToList = () => {
-    if (isEdit) {
-    
-      const updatedTaskList = taskList.map((task) =>
-        task.id === id
-          ? { id, title, description, priority }
-          : task
-      );
-      setTaskList(updatedTaskList);
-    } else {
+    if(checkRequiredFields () === false){
+      return;
+    }
+  }
       
       const randomId = Math.floor(Math.random() * 1000);
       const obj = {
