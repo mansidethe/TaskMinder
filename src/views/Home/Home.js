@@ -1,20 +1,32 @@
 import React, { useEffect, useState } from "react";
 import "./Home.css";
-import Task from "../../componenets/Task/Task";
+import Task from "./../../componenets/Task/Task";
 import showToast from 'crunchy-toast';
-import { saveListToLocalStorage } from "../../util/Localstorage";
+import { saveListToLocalStorage } from "./../../util/Localstorage";
 
 const Home = () => {
-  const [taskList, setTaskList] = useState([]);
+  const [taskList, setTaskList] = useState([
+
+    {
+      id:1,
+      title:'Make ToDo List',
+      description:'Fastly complete the this app',
+      priority:'high'
+    },
+
+  ])
   const [id, setId] = useState(0);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [priority, setPriority] = useState("");
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [priority, setPriority] = useState('');
   const [isEdit, setIsEdit] = useState(false);
 
   useEffect(() => {
     const list = JSON.parse(localStorage.getItem("pinklist")) ;
-    setTaskList(list);
+    if(list && list.lenght > 0){
+      setTaskList(list)
+    }
+   
   }, []);
 
   
