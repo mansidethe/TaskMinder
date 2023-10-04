@@ -1,4 +1,4 @@
  export const saveListToLocalStorage = (tasks) => {
-    localStorage.setItem("pinklist", JSON.stringify(tasks));
+    //localStorage.setItem("pinklist", JSON.stringify(tasks));
   };
 
