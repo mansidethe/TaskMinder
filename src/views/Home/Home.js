@@ -9,7 +9,7 @@ const Home = () => {
     {
       id: 1,
       title: 'Make ToDo List',
-      description: 'Fastly complete the this app',
+      description: 'Fastly complete this app',
       priority: 'high'
     }
 
